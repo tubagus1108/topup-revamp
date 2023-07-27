@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ class VerifyApiToken
         $staticToken = $request->header('Authorization');
 
         // Lakukan pengecekan token di sini dengan mengambil data pengguna berdasarkan token dari tabel pengguna
-        $user = \App\Models\User::where('token', $staticToken)->first();
+        $user = User::where('token', $staticToken)->first();
 
         if (!$user) {
             return response()->json(['message' => 'Invalid static token'], 401);
