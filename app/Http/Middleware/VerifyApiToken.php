@@ -22,7 +22,7 @@ class VerifyApiToken
         $user = User::where('token', $staticToken)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Invalid static token'], 401);
+            return response()->json(['message' => 'Invalid token'], 401);
         }
 
         // Simpan data pengguna dalam instance $request untuk digunakan pada controller
