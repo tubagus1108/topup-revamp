@@ -103,6 +103,18 @@ class Services extends Model
         return $transformedServices;
     }
 
+    public static function getProductID($id,$user){
+        dd($id,$user);
+        $product = Services::with('category')->findOrFail($id)->first();
+
+        $transformedServices = $product->map(function ($service) use ($user) {
+            return self::transformService($service, $user->role);
+        });
+
+        return $transformedServices;
+
+    }
+
     private static function transformService($service, $role)
     {
         $serviceArray = $service->toArray();
@@ -131,7 +143,7 @@ class Services extends Model
 
     private static function removeUnnecessaryFields(&$serviceArray)
     {
-        $unnecessaryFields = ['id', 'price_member', 'price_platinum', 'price_gold', 'profit', 'profit_member', 'profit_gold', 
+        $unnecessaryFields = ['price_member', 'price_platinum', 'price_gold', 'profit', 'profit_member', 'profit_gold', 
                             'profit_member', 'profit_platinum', 'provider', 'product_logo', 'created_at', 'updated_at', 'deleted_at'];
 
         foreach($unnecessaryFields as $field){

@@ -15,18 +15,30 @@ class CheckWhitelistedIp
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Get user IP
         $user_ip = $request->ip();
-        // Anda sudah menambahkan pengguna ke dalam request di middleware 'verifiedToken'
+
+        // Get user from the request attributes set by the 'verifiedToken' middleware
         $user = $request->get('user');
 
-        // Ambil whitelist IP dari pengguna tersebut
-        $whitelisted_ips = $user->whitelist_ip;
+        // Check if the user is null or whitelist_ip is not set
+        if (!$user || !isset($user->whitelist_ip)) {
+            return response()->json(['message' => 'Unauthorized: user data not found or IP not whitelisted'], 401);
+        }
 
-        // Periksa jika IP pengguna ada dalam daftar IP yang diperbolehkan
-        if (!in_array($user_ip, explode(",", $whitelisted_ips))) {
+        // Get the whitelist IP addresses as an array
+        $whitelisted_ips = explode(",", $user->whitelist_ip);
+
+        // Trim the IP addresses to remove any white spaces around them
+        $whitelisted_ips = array_map('trim', $whitelisted_ips);
+
+        // Check if the user's IP is in the list of whitelisted IPs
+        if (!in_array($user_ip, $whitelisted_ips)) {
             return response()->json(['message' => 'Unauthorized: your IP is not whitelisted'], 401);
         }
 
+        // If the user's IP is whitelisted, proceed with the request
         return $next($request);
     }
+
 }

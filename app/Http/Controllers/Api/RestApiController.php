@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderPrepaidRequest;
 use App\Models\Services;
 use Illuminate\Http\Request;
 
@@ -19,4 +20,9 @@ class RestApiController extends Controller
         $data = Services::getService($user);
         return response()->json(['status' => 'success','message' => 'Success get product-list','data' => $data]);
     }
+
+    public function order_prepaid(Request $request){
+       dd($request);
+    }
+
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Requests\OrderPrepaidRequest;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +32,7 @@ Route::group(['middleware' => ['verifiedToken','verifiedIP','verifiedRole']],fun
 
         //ORDER PREPAID
         Route::group(['prefix' => 'order'], function(){
-            Route::post('prepaid',function(){
-                dd("tes");
-            });
+            Route::post('prepaid',[RestApiController::class,'order_prepaid']);
         });
 
     });
