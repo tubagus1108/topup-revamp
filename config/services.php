@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'digiflazz' => [
+        'username' => env('DIGIFLAZZ_USERNAME'),
+        'secret_key' => env('DIGIFLAZZ_SECRET_KEY'),
+        'base_url' => env('DIGIFLAZZ_BASE_URL'),
+    ],
+    
 ];

@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('category_id');
-            $table->string('service')->nullable();
+            $table->string('name')->nullable();
             $table->string('sid')->nullable();
             $table->bigInteger('price')->nullable();
             $table->bigInteger('price_member')->nullable();
             $table->bigInteger('price_platinum')->nullable();
-            $table->bigInteger('big_gold')->nullable();
+            $table->bigInteger('price_gold')->nullable();
             $table->integer('profit')->nullable();
             $table->integer('profit_member')->nullable();
             $table->integer('profit_platinum')->nullable();
