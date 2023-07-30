@@ -60,5 +60,17 @@ class Services extends Model
     
         return $service;
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
     
+    public static function getServiceDatatable($start, $length, $column, $order)
+    {
+        return Services::with('category')->offset($start)
+                     ->limit($length)
+                     ->orderBy($column, $order)
+                     ->get();
+    }
 }

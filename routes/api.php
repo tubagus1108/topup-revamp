@@ -2,10 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RestApiController;
+use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,13 +31,19 @@ Route::group(['prefix' => 'auth'],function(){
     Route::post('login',[AuthController::class,'login']);
 });
 
-Route::group(['middleware' => ['jwt', 'role']], function () {
-    Route::group(['prefix' => 'users'], function () {
-        Route::get('datatable', [UserController::class,'getUsersDatatable']);
-        Route::post('create',[UserController::class,'createUser']);
-        Route::get('{id}/detail', [UserController::class, 'detailUser']);
-        Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
-        Route::put('{id}/update', [UserController::class, 'editUser']);
+Route::group(['middleware' => ['jwt']], function () {
+    Route::group(['middleware' => ['role']],function(){
+        Route::group(['prefix' => 'users'], function () {
+            Route::get('datatable', [UserController::class,'getUsersDatatable']);
+            Route::post('create',[UserController::class,'createUser']);
+            Route::get('{id}/detail', [UserController::class, 'detailUser']);
+            Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
+            Route::put('{id}/update', [UserController::class, 'editUser']);
+        });
+    });
+
+    Route::group(['prefix' => 'service'],function(){
+        Route::get('datatable',[ServiceController::class,'getServiceDatatable']);
     });
 });
 

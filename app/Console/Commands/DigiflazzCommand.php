@@ -59,16 +59,18 @@ class DigiflazzCommand extends Command
             foreach ($response['data'] as $item) {
                 // Menyiapkan data kategori berdasarkan informasi dari API
                 $categoryData = [
-                    'name' => $item['category'],
+                    'name' => Str::lower($item['brand']),
                     'code' => str_replace(' ', '-', Str::lower($item['brand'])),
                     'brand' => Str::upper($item['brand']),
                     'status' => $item['seller_product_status'] ? 'active' : 'inactive',
                     'type' => Str::lower($item['category']),
                 ];
-
-                // Memeriksa apakah kategori dengan nama yang sama sudah ada di database
-                $existingCategory = Category::where('name', $item['category'])->first();
-
+                
+                // Memeriksa apakah kategori dengan nama dan tipe yang sama sudah ada di database
+                $existingCategory = Category::where('name', $categoryData['name'])
+                                            ->where('type', $categoryData['type'])
+                                            ->first();                
+                
                 // Menyiapkan data Service berdasarkan kategori di atas
                 $servicesData = [
                     'name' => $item['product_name'],
