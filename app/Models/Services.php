@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Str;
 class Services extends Model
 {
     use HasFactory;
@@ -27,6 +27,10 @@ class Services extends Model
         'notes',
         'status',
         'provider',
+    ];
+
+    protected $hidden = [
+        'category_id',
     ];
 
     public static function createService(array $request)
@@ -66,11 +70,73 @@ class Services extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
     
+    public function getCategoryNameAttribute(){
+        return $this->category->name ?? null;
+    }
+
     public static function getServiceDatatable($start, $length, $column, $order)
     {
-        return Services::with('category')->offset($start)
-                     ->limit($length)
-                     ->orderBy($column, $order)
-                     ->get();
+        $services = Services::with('category')
+                    ->offset($start)
+                    ->limit($length)
+                    ->orderBy($column, $order)
+                    ->get();
+
+        // // Ubah setiap layanan menjadi array dan ubah category_id menjadi nama kategori
+        $transformedServices = $services->transform(function ($service) {
+            $serviceArray = $service->toArray();
+            $serviceArray['category'] = $service->category->code;
+            return $serviceArray;
+        });
+
+        return $transformedServices;
     }
+
+    public static function getService($role)
+    {
+        $services = Services::with('category')->get();
+
+        $transformedServices = $services->map(function ($service) use ($role) {
+            return self::transformService($service, $role);
+        });
+
+        return $transformedServices;
+    }
+
+    private static function transformService($service, $role)
+    {
+        $serviceArray = $service->toArray();
+        $serviceArray['category'] = $service->category->code;
+
+        // Set price based on role
+        $rolePriceMapping = self::getRolePriceMapping();
+        if(isset($rolePriceMapping[$role])){
+            $serviceArray['price'] = $serviceArray[$rolePriceMapping[$role]];
+        }
+
+        self::removeUnnecessaryFields($serviceArray);
+        return $serviceArray;
+    }
+
+    private static function getRolePriceMapping()
+    {
+        // consider these values to be constants or from configuration
+        return [
+            'Admin' => 'price',
+            'Member' => 'price_member',
+            'Platinum' => 'price_platinum',
+            'Gold' => 'price_gold'
+        ];
+    }
+
+    private static function removeUnnecessaryFields(&$serviceArray)
+    {
+        $unnecessaryFields = ['id', 'price_member', 'price_platinum', 'price_gold', 'profit', 'profit_member', 'profit_gold', 
+                            'profit_member', 'profit_platinum', 'provider', 'product_logo', 'created_at', 'updated_at', 'deleted_at'];
+
+        foreach($unnecessaryFields as $field){
+            unset($serviceArray[$field]);
+        }
+    }
+
 }

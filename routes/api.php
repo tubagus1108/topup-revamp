@@ -24,6 +24,18 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['verifiedToken','verifiedIP','verifiedRole']],function(){
     Route::group(['prefix' => 'v1'],function(){
         Route::get('profile',[RestApiController::class,'profile']);
+        Route::post('product',[RestApiController::class,'product']);
+        Route::post('status',function(){
+            dd("status");
+        });
+
+        //ORDER PREPAID
+        Route::group(['prefix' => 'order'], function(){
+            Route::post('prepaid',function(){
+                dd("tes");
+            });
+        });
+
     });
 });
 
