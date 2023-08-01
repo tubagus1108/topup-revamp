@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrderPrepaidRequest extends FormRequest
+class OrderStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class OrderPrepaidRequest extends FormRequest
     {
         return [
             'api_key'=> 'required|string',
-            'product' => 'required|integer',
-            'target' => 'required|string',
+            'invoice' => 'required|string',
         ];
     }
 }

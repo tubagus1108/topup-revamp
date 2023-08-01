@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleVerify
@@ -14,15 +16,13 @@ class RoleVerify
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
 
-     public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        // Anda sudah menambahkan pengguna ke dalam request di middleware 'verifiedToken'
+        // Mendapatkan pengguna dari request
         $user = $request->get('user');
 
-        // Buat array berisi peran yang diizinkan
         $allowed_roles = ['Member', 'Gold', 'Platinum'];
 
-        // Periksa jika peran pengguna berada di dalam array peran yang diizinkan
         if (!in_array($user->role, $allowed_roles)) {
             return response()->json(['message' => 'Unauthorized: you do not have the required role'], 401);
         }

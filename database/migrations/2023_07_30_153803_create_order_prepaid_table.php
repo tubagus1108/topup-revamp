@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('order_prepaid', function (Blueprint $table) {
             $table->id();
+            $table->string('user_id');
+            $table->string('invoice');
             $table->string('order_id');
             $table->string('customer_no');
             $table->integer('id_service')->nullable();

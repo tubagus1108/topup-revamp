@@ -136,6 +136,10 @@ class User extends Authenticatable implements JWTSubject
         return $user;
     }
 
+    public function checkBalance($price){
+        return $this->balance > $price;
+    }
+
     public static function generateCustomToken()
     {
         $token = base64_encode(random_bytes(40)); // Menghasilkan token acak sepanjang 40 byte dan di-encode dengan base64

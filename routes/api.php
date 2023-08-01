@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CallbackController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
@@ -24,11 +25,9 @@ use Illuminate\Support\Facades\Route;
 //Documention User Order by Rest Api
 Route::group(['middleware' => ['verifiedToken','verifiedIP','verifiedRole']],function(){
     Route::group(['prefix' => 'v1'],function(){
-        Route::get('profile',[RestApiController::class,'profile']);
+        Route::post('profile',[RestApiController::class,'profile']);
         Route::post('product',[RestApiController::class,'product']);
-        Route::post('status',function(){
-            dd("status");
-        });
+        Route::post('status',[RestApiController::class,'status']);
 
         //ORDER PREPAID
         Route::group(['prefix' => 'order'], function(){
@@ -37,6 +36,7 @@ Route::group(['middleware' => ['verifiedToken','verifiedIP','verifiedRole']],fun
 
     });
 });
+Route::post('callback',[CallbackController::class,'callback']);
 
 Route::group(['prefix' => 'auth'],function(){
     Route::post('login',[AuthController::class,'login']);

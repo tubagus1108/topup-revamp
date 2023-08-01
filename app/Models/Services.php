@@ -94,7 +94,7 @@ class Services extends Model
 
     public static function getService($role)
     {
-        $services = Services::with('category')->get();
+        $services = Services::with('category')->where('status','available')->get();
 
         $transformedServices = $services->map(function ($service) use ($role) {
             return self::transformService($service, $role);
@@ -103,18 +103,60 @@ class Services extends Model
         return $transformedServices;
     }
 
-    public static function getProductID($id,$user){
-        dd($id,$user);
-        $product = Services::with('category')->findOrFail($id)->first();
-
-        $transformedServices = $product->map(function ($service) use ($user) {
-            return self::transformService($service, $user->role);
-        });
-
-        return $transformedServices;
-
-    }
-
+    public static function getProductID($id, $user){
+        // Mendapatkan produk dengan id yang diberikan
+        $product = Services::with('category')->findOrFail($id);
+    
+        // Mengecek role user dan mengambil harga sesuai dengan role tersebut
+        switch ($user->role) {
+            case 'Admin':
+                $price = $product->price;
+                break;
+            case 'Member':
+                $price = $product->price_member;
+                break;
+            case 'Platinum':
+                $price = $product->price_platinum;
+                break;
+            case 'Gold':
+                $price = $product->price_gold;
+                break;
+            default:
+                $price = $product->price;
+                break;
+        }
+    
+        switch ($user->role) {
+            case 'Admin':
+                $profit = $product->profit;
+                break;
+            case 'Member':
+                $profit = $product->profit_member;
+                break;
+            case 'Platinum':
+                $profit = $product->profit_platinum;
+                break;
+            case 'Gold':
+                $profit = $product->profit_gold;
+                break;
+            default:
+                $profit = $product->profit;
+                break;
+        }
+        // Membuat response sesuai dengan format yang diinginkan
+        $response = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'sid' => $product->sid,
+            'price' => $price,
+            'profit' => $profit,
+            'notes' => $product->notes,
+            'status' => $product->status,
+            'category' => $product->category->name // Anda perlu memastikan bahwa setiap produk memiliki kategori
+        ];
+    
+        return $response;
+    }    
     private static function transformService($service, $role)
     {
         $serviceArray = $service->toArray();
