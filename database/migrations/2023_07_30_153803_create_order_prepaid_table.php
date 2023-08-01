@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('profit')->nullable();
             $table->string('sid')->nullable();
             $table->enum('status', ['Success', 'Pending', 'Fail'])->default('Pending');
+            $table->enum('order_via', ['api', 'website'])->default('Website');
             $table->text('desc')->nullable();
             $table->string('transaction_type')->nullable();
             $table->timestamps();

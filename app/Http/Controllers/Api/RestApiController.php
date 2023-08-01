@@ -57,6 +57,7 @@ class RestApiController extends Controller
                 'status' => 'Pending',
                 'desc' => null,
                 'transaction_type' => 'prepaid',
+                'order_via' => 'api',
             ]);
     
             $response = OrderPrepaid::orederDigiflazz([

@@ -24,7 +24,8 @@ class OrderPrepaid extends Model
         'sid',
         'status',
         'desc',
-        'transaction_type'
+        'transaction_type',
+        'order_by',
     ];
 
     protected $hidden = [
@@ -64,6 +65,7 @@ class OrderPrepaid extends Model
             'status' => $request['status'],
             'desc' => $request['desc'],
             'transaction_type' => $request['transaction_type'],
+            'order_via' => $request['order_via'],
         ]);
         
         $order->save();
