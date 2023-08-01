@@ -31,6 +31,7 @@ class User extends Authenticatable implements JWTSubject
         'role',
         'token',
         'password',
+        'pin',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable implements JWTSubject
         'otp',
         'whitelist_ip',
         'deleted_at',
+        'pin',
     ];
 
     /**
@@ -107,6 +109,7 @@ class User extends Authenticatable implements JWTSubject
             'balance' => $request['balance'],
             'role' => $request['role'],
             'token' => static::generateCustomToken(),
+            'pin' => $request['pin'],
         ]);
         
         $user->save();

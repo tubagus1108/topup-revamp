@@ -25,7 +25,7 @@ class OrderPrepaid extends Model
         'status',
         'desc',
         'transaction_type',
-        'order_by',
+        'order_via',
     ];
 
     protected $hidden = [

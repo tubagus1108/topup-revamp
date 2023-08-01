@@ -22,6 +22,7 @@ return new class extends Migration
             $table->bigInteger('balance')->default(0);
             $table->enum('role', ['Admin', 'Member', 'Gold','Platinum'])->default('Admin');
             $table->string("otp")->nullable();
+            $table->string('pin');
             $table->rememberToken();
             $table->string("token")->nullable();
             $table->timestamps();

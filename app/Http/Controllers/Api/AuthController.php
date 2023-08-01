@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -27,6 +31,33 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+
+    public function register(RegisterRequest $request){
+        try {
+            $user = User::createNewUser([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'whatsapp' => $request['whatsapp'],
+                'username' => $request['username'],
+                'pin'=> Hash::make($request['pin']),
+                'balance' => 0,
+                'role' => "Member",
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully register!',
+                'data' => $user,
+            ], HttpResponse::HTTP_CREATED);
+
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error: ' . $ex->getMessage(),
+            ], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     private function authenticate($credentials, $field)
