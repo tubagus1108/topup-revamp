@@ -20,7 +20,6 @@ class CallbackController extends Controller
         }
 
         $dataArray = json_decode($request->getContent(), true)['data'];
-        Log::info($dataArray);
         $status = PaymentHelper::DFStatus($dataArray['message']);
         $trxid = $dataArray['trx_id']; // ID Transaksi DigiFlazz
         $refid = $dataArray['ref_id']; // ID Transaksi dari Panel
