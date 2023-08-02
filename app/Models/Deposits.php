@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Deposits extends Model
+{
+    use HasFactory;
+
+    protected $table = 'deposits';
+    protected $gaurded = [];
+
+    protected $fillable = [
+        'user_id',
+        'method_id',
+        'payment_no',
+        'amount',
+        'status',
+    ];
+
+    public static function createdDeposit(array $request){
+        $deposit = new Deposits([
+            'user_id' => $request['user_id'],
+            'method_id' => $request['method_id'],
+            'payment_no' => $request['payment_no'],
+            'amount' => $request['amount'],
+            'status' => $request['status']
+        ]);
+        
+        $deposit->save();
+
+        return $deposit;
+    }
+
+    public static function depositPending($user_id){
+        return Deposits::where('user_id',$user_id)->first();
+    }
+}

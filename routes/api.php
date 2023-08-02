@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CallbackController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Requests\OrderPrepaidRequest;
 use Illuminate\Support\Facades\Route;
 /*
@@ -52,10 +53,16 @@ Route::group(['middleware' => ['jwt']], function () {
             Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
             Route::put('{id}/update', [UserController::class, 'editUser']);
         });
+
+        Route::group(['prefix' => 'payment'],function(){
+            Route::post('create',[PaymentController::class,'created']);
+        });
     });
 
     Route::group(['prefix' => 'service'],function(){
         Route::get('datatable',[ServiceController::class,'getServiceDatatable']);
     });
+
+    Route::post('deposit',[PaymentController::class,'createdDeposit']);
 });
 

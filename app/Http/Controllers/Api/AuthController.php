@@ -86,4 +86,5 @@ class AuthController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ], HttpResponse::HTTP_ACCEPTED);
     }
+    
 }
