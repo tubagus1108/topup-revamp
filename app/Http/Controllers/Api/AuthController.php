@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -38,14 +39,14 @@ class AuthController extends Controller
             $user = User::createNewUser([
                 'name' => $request['name'],
                 'email' => $request['email'],
-                'password' => Hash::make($request['password']),
+                'password' => $request['password'],
                 'whatsapp' => $request['whatsapp'],
                 'username' => $request['username'],
-                'pin'=> Hash::make($request['pin']),
+                'pin'=> $request['pin'],
                 'balance' => 0,
                 'role' => "Member",
             ]);
-
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully register!',

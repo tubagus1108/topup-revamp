@@ -31,6 +31,7 @@ class Services extends Model
 
     protected $hidden = [
         'category_id',
+        'provider',
     ];
 
     public static function createService(array $request)

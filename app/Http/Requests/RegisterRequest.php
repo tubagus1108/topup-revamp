@@ -27,6 +27,8 @@ class RegisterRequest extends FormRequest
             'whatsapp' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'pin' => 'required|string|min:6|max:6',
+            'password' => 'required|string|min:8',  // menambahkan ini
         ];
     }
+
 }

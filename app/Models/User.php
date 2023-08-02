@@ -65,7 +65,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
     // Rest omitted for brevity
@@ -109,7 +108,7 @@ class User extends Authenticatable implements JWTSubject
             'balance' => $request['balance'],
             'role' => $request['role'],
             'token' => static::generateCustomToken(),
-            'pin' => $request['pin'],
+            'pin' => Hash::make($request['pin']),
         ]);
         
         $user->save();
