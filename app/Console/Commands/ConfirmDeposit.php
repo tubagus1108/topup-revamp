@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Deposits;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-
 class ConfirmDeposit extends Command
 {
     /**
@@ -29,6 +28,8 @@ class ConfirmDeposit extends Command
     {
         $data = Deposits::where('status','Pending')->get();
         Log::info(json_decode($data));
+
+        // $parser = new BCA
         
     }
 }

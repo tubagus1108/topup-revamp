@@ -148,4 +148,10 @@ class User extends Authenticatable implements JWTSubject
 
         return $token;
     }
+
+    public function isAdmin()
+    {
+        return $this->role === 'Admin'; // Ubah 'admin' sesuai dengan nilai yang mewakili peran Admin dalam basis data
+    }
+
 }

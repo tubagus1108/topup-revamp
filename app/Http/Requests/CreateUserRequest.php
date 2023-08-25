@@ -27,8 +27,10 @@ class CreateUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'whatsapp' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
-            'balance' => 'required|integer',
+            'balance' => 'required|integer|min:0',
             'role' => 'required|string|max:255',
+            'password' => 'required|string|min:6', // Minimal 6 karakter untuk password
+            'pin' => 'required|integer|min:100000|max:999999', // Minimal dan maksimal 6 angka untuk PIN
         ];
     }
 

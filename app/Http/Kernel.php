@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'verifiedToken' => \App\Http\Middleware\VerifyApiToken::class,
         'verifiedRole' => \App\Http\Middleware\RoleVerify::class,
         'verifiedIP' => \App\Http\Middleware\CheckWhitelistedIp::class,
+        'check.login' => \App\Http\Middleware\CheckLoginAdmin::class,
     ];
 }
