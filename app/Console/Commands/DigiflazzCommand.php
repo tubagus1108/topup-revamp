@@ -32,7 +32,7 @@ class DigiflazzCommand extends Command
         $username = config('services.digiflazz.username');
         $secretKey = config('services.digiflazz.secret_key');
         $baseUrl = config('services.digiflazz.base_url');
-        
+
         // Membuat tanda tangan (signature) untuk permintaan API
         $signature = md5($username . $secretKey . "pricelist");
 
@@ -41,7 +41,7 @@ class DigiflazzCommand extends Command
             'username' => $username,
             'sing' => $signature
         ];
-
+        // dd($data);
         // Menyiapkan header permintaan API
         $header = [
             'Content-Type: application/json',
@@ -65,12 +65,12 @@ class DigiflazzCommand extends Command
                     'status' => $item['seller_product_status'] ? 'active' : 'inactive',
                     'type' => Str::lower($item['category']),
                 ];
-                
+
                 // Memeriksa apakah kategori dengan nama dan tipe yang sama sudah ada di database
                 $existingCategory = Category::where('name', $categoryData['name'])
-                                            ->where('type', $categoryData['type'])
-                                            ->first();                
-                
+                    ->where('type', $categoryData['type'])
+                    ->first();
+
                 // Menyiapkan data Service berdasarkan kategori di atas
                 $servicesData = [
                     'name' => $item['product_name'],
@@ -87,15 +87,15 @@ class DigiflazzCommand extends Command
                     'status' => ($item['seller_product_status'] === true ? "available" : "unavailable"),
                     'provider' => 'digiflazz',
                 ];
-                
+
                 $existingService = Services::where('name', $item['product_name'])->first();
                 if ($existingCategory) {
                     // Jika kategori sudah ada, tambahkan service ke dalam array $createdServices
                     $servicesData['category_id'] = $existingCategory['id'];
-                    if($existingService){
-                        $serviceUpdate = Services::editService($servicesData,$existingService->id);
+                    if ($existingService) {
+                        $serviceUpdate = Services::editService($servicesData, $existingService->id);
                         $createdServices[] = $serviceUpdate;
-                    }else{
+                    } else {
                         $services = Services::createService($servicesData);
                         $createdServices[] = $services;
                     }
@@ -103,10 +103,10 @@ class DigiflazzCommand extends Command
                     // Jika kategori belum ada, buat kategori baru menggunakan metode createCategory()
                     $category = Category::createCategory($categoryData);
                     $servicesData['category_id'] = $category['id'];
-                    if($existingService){
-                        $serviceUpdate = Services::editService($servicesData,$existingService->id);
+                    if ($existingService) {
+                        $serviceUpdate = Services::editService($servicesData, $existingService->id);
                         $createdServices[] = $serviceUpdate;
-                    }else{
+                    } else {
                         $services = Services::createService($servicesData);
                         $createdServices[] = $services;
                     }
@@ -119,13 +119,13 @@ class DigiflazzCommand extends Command
 
         // Mengembalikan array yang berisi data kategori yang berhasil dibuat
         return ['categories' => $createdCategories, 'services' => $createdServices];
-
     }
 
 
-    private function connect($baseUrl,$data,$header){
+    private function connect($baseUrl, $data, $header)
+    {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $baseUrl."price-list");
+        curl_setopt($ch, CURLOPT_URL, $baseUrl . "price-list");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_POST, 1);

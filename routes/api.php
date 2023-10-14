@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CallbackController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Gateway\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Requests\OrderPrepaidRequest;
 use Illuminate\Support\Facades\Route;
@@ -24,45 +25,52 @@ use Illuminate\Support\Facades\Route;
 // });
 
 //Documention User Order by Rest Api
-Route::group(['middleware' => ['verifiedToken','verifiedIP','verifiedRole']],function(){
-    Route::group(['prefix' => 'v1'],function(){
-        Route::post('profile',[RestApiController::class,'profile']);
-        Route::post('product',[RestApiController::class,'product']);
-        Route::post('status',[RestApiController::class,'status']);
+Route::group(['middleware' => ['verifiedToken', 'verifiedIP', 'verifiedRole']], function () {
+    Route::group(['prefix' => 'v1'], function () {
+        Route::post('profile', [RestApiController::class, 'profile']);
+        Route::post('product', [RestApiController::class, 'product']);
+        Route::post('status', [RestApiController::class, 'status']);
 
         //ORDER PREPAID
-        Route::group(['prefix' => 'order'], function(){
-            Route::post('prepaid',[RestApiController::class,'order_prepaid']);
+        Route::group(['prefix' => 'order'], function () {
+            Route::post('prepaid', [RestApiController::class, 'order_prepaid']);
         });
-
     });
 });
-Route::post('callback',[CallbackController::class,'callback']);
+Route::post('callback', [CallbackController::class, 'callback']);
 
-Route::group(['prefix' => 'auth'],function(){
-    Route::post('login',[AuthController::class,'login']);
-    Route::post('register',[AuthController::class,'register']);
+// GATEWAY ROUTE
+Route::group(['prefix' => 'gateway'], function () {
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register']);
+    });
+    Route::group(['middleware' => ['jwt']], function () {
+        Route::group(['prefix' => 'service'], function () {
+            Route::get('datatable', [ServiceController::class, 'getServiceDatatable']);
+        });
+        Route::post('order', [OrderController::class, 'order']);
+    });
 });
 
 Route::group(['middleware' => ['jwt']], function () {
-    Route::group(['middleware' => ['role']],function(){
+    Route::group(['middleware' => ['role']], function () {
         Route::group(['prefix' => 'users'], function () {
-            Route::get('datatable', [UserController::class,'getUsersDatatable']);
-            Route::post('create',[UserController::class,'createUser']);
+            Route::get('datatable', [UserController::class, 'getUsersDatatable']);
+            Route::post('create', [UserController::class, 'createUser']);
             Route::get('{id}/detail', [UserController::class, 'detailUser']);
             Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
             Route::put('{id}/update', [UserController::class, 'editUser']);
         });
 
-        Route::group(['prefix' => 'payment'],function(){
-            Route::post('create',[PaymentController::class,'created']);
+        Route::group(['prefix' => 'payment'], function () {
+            Route::post('create', [PaymentController::class, 'created']);
         });
     });
 
-    Route::group(['prefix' => 'service'],function(){
-        Route::get('datatable',[ServiceController::class,'getServiceDatatable']);
+    Route::group(['prefix' => 'service'], function () {
+        Route::get('datatable', [ServiceController::class, 'getServiceDatatable']);
     });
 
-    Route::post('deposit',[PaymentController::class,'createdDeposit']);
+    Route::post('deposit', [PaymentController::class, 'createdDeposit']);
 });
-

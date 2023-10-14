@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class CallbackController extends Controller
 {
-    public function callback(Request $request){
+    public function callback(Request $request)
+    {
         $secret = 'Satuhati1108';
         $post_data = $request->getContent();
         $signature = hash_hmac('sha1', $post_data, $secret);
@@ -20,6 +21,9 @@ class CallbackController extends Controller
         }
 
         $dataArray = json_decode($request->getContent(), true)['data'];
+        LogTrx::createLog([
+            'log' => json_encode($dataArray),
+        ]);
         $status = PaymentHelper::DFStatus($dataArray['message']);
         $trxid = $dataArray['trx_id']; // ID Transaksi DigiFlazz
         $refid = $dataArray['ref_id']; // ID Transaksi dari Panel

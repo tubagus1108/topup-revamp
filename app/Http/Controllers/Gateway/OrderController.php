@@ -1,42 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Gateway;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\OrderPrepaidRequest;
-use App\Http\Requests\OrderStatusRequest;
 use App\Models\LogTrx;
 use App\Models\OrderPrepaid;
 use App\Models\Services;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class RestApiController extends Controller
+class OrderController extends Controller
 {
-    //Get User Profile
-    public function profile(Request $request)
+    public function order(Request $request)
     {
-        $user = $request->get('user');
-        return response()->json(['status' => 'success', 'message' => 'Success get profile', 'data' => $user]);
-    }
-
-    public function product(Request $request)
-    {
-        $user = $request->get('user')->role;
-        try {
-            $data = Services::getService($user);
-            return response()->json(['status' => 'success', 'message' => 'Success get product-list', 'data' => $data]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            return response()->json(['status' => 'error', 'message' => 'Product not found'], 404);
-        }
-    }
-
-    public function order_prepaid(OrderPrepaidRequest $request)
-    {
-        $user = $request->get('user');
-
+        $auth = Auth::user();
+        $user = User::getDetails($auth->id);
+        // dd("USER", $user);
         $product = Services::getProductID($request->product, $user);
 
         // Check if the user has enough balance
@@ -98,19 +80,5 @@ class RestApiController extends Controller
         }
 
         return response()->json(['status' => 'success', 'message' => 'Success order prepaid', 'data' => $order]);
-    }
-
-    public function status(OrderStatusRequest $request)
-    {
-        $user = $request->get('user');
-        try {
-            $data = OrderPrepaid::getStatus([
-                'id_user' => $user->id,
-                'invoice' => $request->invoice,
-            ]);
-            return response()->json(['status' => 'success', 'message' => 'Success get status order', 'data' => $data]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            return response()->json(['status' => 'error', 'message' => 'Invoice not found'], 404);
-        }
     }
 }

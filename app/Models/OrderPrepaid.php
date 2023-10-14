@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class OrderPrepaid extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'order_prepaid';
     protected $gaurded = [];
@@ -41,20 +42,23 @@ class OrderPrepaid extends Model
         'deleted_at'
     ];
 
-    public static function invoiceOrder(){
+    public static function invoiceOrder()
+    {
         $unik = date('Hs');
-        $kode_unik = substr(str_shuffle(1234567890),0,3);
-        $order_id = 'INV'.$unik.$kode_unik.'RM';
+        $kode_unik = substr(str_shuffle(1234567890), 0, 3);
+        $order_id = 'INV' . $unik . $kode_unik . 'RM';
         return $order_id;
     }
 
-    public static function generetRefId(){
+    public static function generetRefId()
+    {
         return self::acak_nomor(3) . self::acak_nomor(4);
     }
 
-    public static function createOrder(array $request){
+    public static function createOrder(array $request)
+    {
         $order = new OrderPrepaid([
-            'user_id'=> $request['user_id'],
+            'user_id' => $request['user_id'],
             'invoice' => self::invoiceOrder(),
             'order_id' => self::generetRefId(),
             'customer_no' => $request['customer_no'],
@@ -67,21 +71,22 @@ class OrderPrepaid extends Model
             'transaction_type' => $request['transaction_type'],
             'order_via' => $request['order_via'],
         ]);
-        
+
         $order->save();
 
         return $order;
     }
 
-    public static function orederDigiflazz(array $request){
+    public static function orederDigiflazz(array $request)
+    {
         // Mengambil kredensial API Digiflazz dari konfigurasi Laravel
         $username = config('services.digiflazz.username');
         $secretKey = config('services.digiflazz.secret_key');
         $baseUrl = config('services.digiflazz.base_url');
-        
+
         // Membuat tanda tangan (signature) untuk permintaan API
         $signature = md5($username . $secretKey . $request['order_id']);
-        
+
         // Menyiapkan data permintaan API
         $data = [
             'username' => $username,
@@ -89,9 +94,8 @@ class OrderPrepaid extends Model
             'customer_no' => $request['customer_no'],
             'ref_id' => $request['order_id'],
             'sign' => $signature,
-            'testing'=> true,
         ];
-        
+
         // Menyiapkan header permintaan API
         $header = [
             'Content-Type: application/json',
@@ -99,13 +103,14 @@ class OrderPrepaid extends Model
 
         // Melakukan permintaan API menggunakan metode connect() (asumsikan sudah didefinisikan sebelumnya)
         $response = self::connect($baseUrl, $data, $header);
-
+        Log::info("==== RESPONSE ORDER ====", $response);
         return $response;
     }
 
-    public static function acak_nomor($length){
+    public static function acak_nomor($length)
+    {
         $str = "";
-        $karakter = array_merge(range('0','9'));
+        $karakter = array_merge(range('0', '9'));
         $max_karakter = count($karakter) - 1;
         for ($i = 0; $i < $length; $i++) {
             $rand = mt_rand(0, $max_karakter);
@@ -114,18 +119,20 @@ class OrderPrepaid extends Model
         return $str;
     }
 
-    public static function getStatus(array $request){
+    public static function getStatus(array $request)
+    {
         $id_user = $request['id_user'];
         $invoice = $request['invoice'];
-    
-        return OrderPrepaid::where('user_id', $id_user)
-                           ->where('invoice', $invoice)
-                           ->firstOrFail();
-    }    
 
-    public static function connect($baseUrl,$data,$header){
+        return OrderPrepaid::where('user_id', $id_user)
+            ->where('invoice', $invoice)
+            ->firstOrFail();
+    }
+
+    public static function connect($baseUrl, $data, $header)
+    {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $baseUrl."transaction");
+        curl_setopt($ch, CURLOPT_URL, $baseUrl . "transaction");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -171,7 +178,7 @@ class OrderPrepaid extends Model
 
             default:
                 LogTrx::created([
-                    'log' => "Unrecognized payment status: ".$status,
+                    'log' => "Unrecognized payment status: " . $status,
                 ]);
                 return false;
         }

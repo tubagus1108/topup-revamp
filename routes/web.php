@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Api\AuthController as AuthGatewayController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MembersController;
 use Illuminate\Support\Facades\Route;
@@ -20,19 +21,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'admin'],function(){
-    Route::group(['prefix' => 'auth'],function(){
+
+Route::group(['prefix' => 'admin'], function () {
+    Route::group(['prefix' => 'auth'], function () {
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
     });
     Route::middleware('check.login')->group(function () {
         // Definisikan rute-rute yang memerlukan akses login di sini
-        Route::get('dashboard',[DashboardController::class,'index']);
+        Route::get('dashboard', [DashboardController::class, 'index']);
 
         Route::group(['prefix' => 'members'], function () {
-            Route::get('',[MembersController::class,'index'])->name('members');
-            Route::post('add',[MembersController::class,'store']);
+            Route::get('', [MembersController::class, 'index'])->name('members');
+            Route::post('add', [MembersController::class, 'store']);
         });
     });
 });
