@@ -60,7 +60,7 @@ class DigiflazzCommand extends Command
                 // Menyiapkan data kategori berdasarkan informasi dari API
                 $categoryData = [
                     'name' => Str::lower($item['brand']),
-                    'code' => str_replace(' ', '-', Str::lower($item['brand'])),
+                    'code' => str_replace([' ', '.'], ['-', '-'], Str::lower($item['brand'])),
                     'brand' => Str::upper($item['brand']),
                     'status' => $item['seller_product_status'] ? 'active' : 'inactive',
                     'type' => Str::lower($item['category']),

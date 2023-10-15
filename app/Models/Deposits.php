@@ -20,21 +20,23 @@ class Deposits extends Model
         'status',
     ];
 
-    public static function createdDeposit(array $request){
+    public static function createdDeposit(array $request)
+    {
         $deposit = new Deposits([
             'user_id' => $request['user_id'],
             'method_id' => $request['method_id'],
             'payment_no' => $request['payment_no'],
-            'amount' => $request['amount'],
+            'amount' => $request['amount'] + rand(1, 999),
             'status' => $request['status']
         ]);
-        
+
         $deposit->save();
 
         return $deposit;
     }
 
-    public static function depositPending($user_id){
-        return Deposits::where('user_id',$user_id)->first();
+    public static function depositPending($user_id)
+    {
+        return Deposits::where('user_id', $user_id)->where('status', 'Pending')->first();
     }
 }

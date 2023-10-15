@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CallbackController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Gateway\GojekController;
 use App\Http\Controllers\Gateway\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Requests\OrderPrepaidRequest;
@@ -50,27 +51,35 @@ Route::group(['prefix' => 'gateway'], function () {
             Route::get('datatable', [ServiceController::class, 'getServiceDatatable']);
         });
         Route::post('order', [OrderController::class, 'order']);
-    });
-});
 
-Route::group(['middleware' => ['jwt']], function () {
-    Route::group(['middleware' => ['role']], function () {
-        Route::group(['prefix' => 'users'], function () {
-            Route::get('datatable', [UserController::class, 'getUsersDatatable']);
-            Route::post('create', [UserController::class, 'createUser']);
-            Route::get('{id}/detail', [UserController::class, 'detailUser']);
-            Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
-            Route::put('{id}/update', [UserController::class, 'editUser']);
+        Route::group(['prefix' => 'service'], function () {
+            Route::get('datatable', [ServiceController::class, 'getServiceDatatable']);
         });
 
-        Route::group(['prefix' => 'payment'], function () {
-            Route::post('create', [PaymentController::class, 'created']);
+        Route::post('deposit', [PaymentController::class, 'createdDeposit']);
+        Route::get('/order/{code}', [ServiceController::class, 'layanan']);
+
+        //Role route Admin
+        Route::group(['middleware' => ['role']], function () {
+            Route::group(['prefix' => 'settings'], function () {
+                Route::group(['prefix' => 'payment'], function () {
+                    Route::get('/gopay',                                    [GojekController::class, 'create'])->name('gopay');
+                    Route::post('/gopay',                                   [GojekController::class, 'store'])->name('gopay.post');
+                    Route::get('/gopay/Gojek-OTP/{no}',                     [GojekController::class, 'GetOTP']);
+                    Route::post('/gopay/Gojek-validasi',                    [GojekController::class, 'VerifOTP']);
+                });
+            });
+            Route::group(['prefix' => 'payment'], function () {
+                Route::post('create', [PaymentController::class, 'created']);
+            });
+
+            Route::group(['prefix' => 'users'], function () {
+                Route::get('datatable', [UserController::class, 'getUsersDatatable']);
+                Route::post('create', [UserController::class, 'createUser']);
+                Route::get('{id}/detail', [UserController::class, 'detailUser']);
+                Route::delete('{id}/delete', [UserController::class, 'deleteUser']);
+                Route::put('{id}/update', [UserController::class, 'editUser']);
+            });
         });
     });
-
-    Route::group(['prefix' => 'service'], function () {
-        Route::get('datatable', [ServiceController::class, 'getServiceDatatable']);
-    });
-
-    Route::post('deposit', [PaymentController::class, 'createdDeposit']);
 });

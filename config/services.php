@@ -36,5 +36,10 @@ return [
         'secret_key' => env('DIGIFLAZZ_SECRET_KEY'),
         'base_url' => env('DIGIFLAZZ_BASE_URL'),
     ],
-    
+
+    'gopay' => [
+        'nomor' => env('GOJEK_PHONE'),
+        'pin' => env('GOJEK_PIN')
+    ],
+
 ];

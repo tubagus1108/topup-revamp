@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+
 class Services extends Model
 {
     use HasFactory;
@@ -52,17 +53,18 @@ class Services extends Model
             'status' => $request['status'],
             'provider' => $request['provider'],
         ]);
-        
+
         $services->save();
 
         return $services;
     }
 
-    public static function editService($request, $id) {
+    public static function editService($request, $id)
+    {
         $service = Services::findOrFail($id);
         $service->fill($request);
         $service->save();
-    
+
         return $service;
     }
 
@@ -70,18 +72,19 @@ class Services extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
-    
-    public function getCategoryNameAttribute(){
+
+    public function getCategoryNameAttribute()
+    {
         return $this->category->name ?? null;
     }
 
     public static function getServiceDatatable($start, $length, $column, $order)
     {
         $services = Services::with('category')
-                    ->offset($start)
-                    ->limit($length)
-                    ->orderBy($column, $order)
-                    ->get();
+            ->offset($start)
+            ->limit($length)
+            ->orderBy($column, $order)
+            ->get();
 
         // // Ubah setiap layanan menjadi array dan ubah category_id menjadi nama kategori
         $transformedServices = $services->transform(function ($service) {
@@ -95,7 +98,7 @@ class Services extends Model
 
     public static function getService($role)
     {
-        $services = Services::with('category')->where('status','available')->get();
+        $services = Services::with('category')->where('status', 'available')->get();
 
         $transformedServices = $services->map(function ($service) use ($role) {
             return self::transformService($service, $role);
@@ -104,10 +107,25 @@ class Services extends Model
         return $transformedServices;
     }
 
-    public static function getProductID($id, $user){
+    public static function getServiceByCode($role, $id_category)
+    {
+
+        $services = Services::where('category_id', $id_category)
+            ->where('status', 'available')
+            ->get();
+
+        $transformedServices = $services->map(function ($service) use ($role) {
+            return self::transformService($service, $role);
+        });
+
+        return $transformedServices;
+    }
+
+    public static function getProductID($id, $user)
+    {
         // Mendapatkan produk dengan id yang diberikan
         $product = Services::with('category')->findOrFail($id);
-    
+
         // Mengecek role user dan mengambil harga sesuai dengan role tersebut
         switch ($user->role) {
             case 'Admin':
@@ -126,7 +144,7 @@ class Services extends Model
                 $price = $product->price;
                 break;
         }
-    
+
         switch ($user->role) {
             case 'Admin':
                 $profit = $product->profit;
@@ -155,9 +173,9 @@ class Services extends Model
             'status' => $product->status,
             'category' => $product->category->name // Anda perlu memastikan bahwa setiap produk memiliki kategori
         ];
-    
+
         return $response;
-    }    
+    }
     private static function transformService($service, $role)
     {
         $serviceArray = $service->toArray();
@@ -165,7 +183,7 @@ class Services extends Model
 
         // Set price based on role
         $rolePriceMapping = self::getRolePriceMapping();
-        if(isset($rolePriceMapping[$role])){
+        if (isset($rolePriceMapping[$role])) {
             $serviceArray['price'] = $serviceArray[$rolePriceMapping[$role]];
         }
 
@@ -186,12 +204,13 @@ class Services extends Model
 
     private static function removeUnnecessaryFields(&$serviceArray)
     {
-        $unnecessaryFields = ['price_member', 'price_platinum', 'price_gold', 'profit', 'profit_member', 'profit_gold', 
-                            'profit_member', 'profit_platinum', 'provider', 'product_logo', 'created_at', 'updated_at', 'deleted_at'];
+        $unnecessaryFields = [
+            'price_member', 'price_platinum', 'price_gold', 'profit', 'profit_member', 'profit_gold',
+            'profit_member', 'profit_platinum', 'provider', 'product_logo', 'created_at', 'updated_at', 'deleted_at'
+        ];
 
-        foreach($unnecessaryFields as $field){
+        foreach ($unnecessaryFields as $field) {
             unset($serviceArray[$field]);
         }
     }
-
 }

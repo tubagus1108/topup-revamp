@@ -21,7 +21,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::get('/get-transaction', function () {
+    Illuminate\Support\Facades\Artisan::call("app:gopay-run");
+});
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
