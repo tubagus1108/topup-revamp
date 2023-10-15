@@ -69,4 +69,10 @@ class PaymentController extends Controller
 
         return response()->json(['message' => 'Get deposit list success', 'data' => $status_deposit], 200);
     }
+
+    public function list()
+    {
+        $list = Payment::all();
+        return response()->json(['message' => 'Get payment method list success', 'data' => $list], 200);
+    }
 }

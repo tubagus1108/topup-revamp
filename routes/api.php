@@ -61,6 +61,7 @@ Route::group(['prefix' => 'gateway'], function () {
         Route::get('/order/{code}', [ServiceController::class, 'layanan']);
 
         Route::get('/deposit/status', [PaymentController::class, 'status']);
+        Route::get('/deposit', [PaymentController::class, 'list']);
 
         //Role route Admin
         Route::group(['middleware' => ['role']], function () {
