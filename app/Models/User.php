@@ -13,7 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $table = 'users';
     /**
@@ -89,12 +89,21 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public static function sendSaldo(array $request)
+    {
+        $user = User::where('username', $request['username'])->first();
+        $user->balance += $request['balance'];
+
+        $user->save();
+        return $user;
+    }
+
     public static function getUsersDatatable($start, $length, $column, $order)
     {
         return User::offset($start)
-                     ->limit($length)
-                     ->orderBy($column, $order)
-                     ->get();
+            ->limit($length)
+            ->orderBy($column, $order)
+            ->get();
     }
 
     public static function createNewUser(array $request)
@@ -110,7 +119,7 @@ class User extends Authenticatable implements JWTSubject
             'token' => static::generateCustomToken(),
             'pin' => Hash::make($request['pin']),
         ]);
-        
+
         $user->save();
 
         return $user;
@@ -138,7 +147,8 @@ class User extends Authenticatable implements JWTSubject
         return $user;
     }
 
-    public function checkBalance($price){
+    public function checkBalance($price)
+    {
         return $this->balance > $price;
     }
 
@@ -153,5 +163,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->role === 'Admin'; // Ubah 'admin' sesuai dengan nilai yang mewakili peran Admin dalam basis data
     }
-
 }

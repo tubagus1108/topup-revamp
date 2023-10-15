@@ -37,6 +37,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::group(['prefix' => 'members'], function () {
             Route::get('', [MembersController::class, 'index'])->name('members');
             Route::post('add', [MembersController::class, 'store']);
+            Route::get('datatable', [MembersController::class, 'datatableMembers'])->name('datatable.members');
         });
     });
 });
