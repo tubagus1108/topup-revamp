@@ -1,6 +1,6 @@
 <?php
 
-namespace Namdevel;
+namespace App\Helpers;
 
 
 class Ovo

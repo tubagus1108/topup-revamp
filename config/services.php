@@ -42,4 +42,8 @@ return [
         'pin' => env('GOJEK_PIN')
     ],
 
+    'ovopay' => [
+        'nomor' => env('OVO_PHONE'),
+        'pin' => env('OVO_PIN')
+    ],
 ];

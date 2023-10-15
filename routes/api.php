@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Gateway\GojekController;
 use App\Http\Controllers\Gateway\OrderController;
+use App\Http\Controllers\Gateway\OvoPayController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Requests\OrderPrepaidRequest;
 use Illuminate\Support\Facades\Route;
@@ -65,8 +66,15 @@ Route::group(['prefix' => 'gateway'], function () {
                 Route::group(['prefix' => 'payment'], function () {
                     Route::get('/gopay',                                    [GojekController::class, 'create'])->name('gopay');
                     Route::post('/gopay',                                   [GojekController::class, 'store'])->name('gopay.post');
-                    Route::get('/gopay/Gojek-OTP/{no}',                     [GojekController::class, 'GetOTP']);
-                    Route::post('/gopay/Gojek-validasi',                    [GojekController::class, 'VerifOTP']);
+                    Route::get('/gopay/gojek-otp/{no}',                     [GojekController::class, 'GetOTP']);
+                    Route::post('/gopay/gojek-validasi',                    [GojekController::class, 'VerifOTP']);
+
+
+                    Route::get('/ovopay',                                    [OvoPayController::class, 'create'])->name('gopay');
+                    Route::post('/ovopay',                                   [OvoPayController::class, 'store'])->name('gopay.post');
+                    Route::get('/ovopay/ovopay-otp/{no}',                     [OvoPayController::class, 'GetOTP']);
+                    Route::post('/ovopay/ovopay-validasi',                    [OvoPayController::class, 'VerifOTP']);
+                    Route::post('/ovopay/validasi-pin',                        [OvoPayController::class, 'VerifPIN']);
                 });
             });
             Route::group(['prefix' => 'payment'], function () {
