@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Category;
 use App\Models\Services;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class DigiflazzCommand extends Command
@@ -117,6 +118,7 @@ class DigiflazzCommand extends Command
             }
         }
 
+        Log::info("Succes Insert Layanan");
         // Mengembalikan array yang berisi data kategori yang berhasil dibuat
         return ['categories' => $createdCategories, 'services' => $createdServices];
     }
