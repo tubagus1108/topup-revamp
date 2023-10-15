@@ -14,10 +14,11 @@ class GojekController extends Controller
     {
     }
 
-    public function GetOTP($no)
+    public function GetOTP()
     {
+        $nomor = config('services.gopay.nomor');
         $app = new GojekPay();
-        $get_otp = json_decode($app->loginRequest($no), true);
+        $get_otp = json_decode($app->loginRequest($nomor), true);
         $otp_token = $get_otp['data']['otp_token'];
         return response()->json([
             'status' => 'True',
@@ -31,9 +32,11 @@ class GojekController extends Controller
         $Auth = json_decode($app->getAuthToken($request->otp_token, $request->otp), true);
         $accessToken = $Auth['access_token'];
 
+        $nomor = config('services.gopay.nomor');
+
         Gopay::insert(
             [
-                'phone' => $request->phone,
+                'phone' => $nomor,
                 'token' => $accessToken,
                 'created_at' => Carbon::now('Asia/Jakarta'),
                 'updated_at' => Carbon::now('Asia/Jakarta')

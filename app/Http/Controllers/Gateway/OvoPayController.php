@@ -24,10 +24,11 @@ class OvoPayController extends Controller
         return back()->with('status', 'Berhasil memasukkan ke database!');
     }
 
-    public function GetOTP($no)
+    public function GetOTP()
     {
+        $nomor = config('services.ovopay.nomor');
         $app = new Ovo();
-        $sendOTP = json_decode($app->sendOtp('+' . $no), true);
+        $sendOTP = json_decode($app->sendOtp('+' . $nomor), true);
         $refId = $sendOTP['data']['otp']['otp_ref_id'];
 
         return response()->json([
@@ -38,8 +39,9 @@ class OvoPayController extends Controller
 
     public function VerifOTP(Request $request)
     {
+        $nomor = config('services.ovopay.nomor');
         $init = new Ovo();
-        $verifOTP = json_decode($init->OTPVerify('+' . $request->nomor, $request->refID, $request->otp), true);
+        $verifOTP = json_decode($init->OTPVerify('+' . $nomor, $request->refID, $request->otp), true);
         $accToken = $verifOTP['data']['otp']['otp_token'];
 
         return response()->json([
@@ -50,13 +52,16 @@ class OvoPayController extends Controller
 
     public function VerifPIN(Request $request)
     {
+        $nomor = config('services.ovopay.nomor');
         $init = new Ovo();
-        $verifPIN = json_decode($init->getAuthToken('+' . $request->nomor, $request->refID, $request->update_token, $request->pin), true);
+        $verifPIN = json_decode($init->getAuthToken('+' . $nomor, $request->refID, $request->update_token, $request->pin), true);
         $authToken = $verifPIN['data']['auth']['refresh_token'];
 
         OvoPay::insert([
-            'phone' => $request->nomor,
+            'phone' => $nomor,
             'token' => $authToken,
+            'created_at' => Carbon::now('Asia/Jakarta'),
+            'updated_at' => Carbon::now('Asia/Jakarta')
         ]);
 
         return response()->json([

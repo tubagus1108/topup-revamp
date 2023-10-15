@@ -120,7 +120,7 @@ class DigiflazzCommand extends Command
 
         Log::info("Succes Insert Layanan");
         // Mengembalikan array yang berisi data kategori yang berhasil dibuat
-        return ['categories' => $createdCategories, 'services' => $createdServices];
+        // return ['categories' => $createdCategories, 'services' => $createdServices];
     }
 
 

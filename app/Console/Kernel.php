@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\DigiflazzCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +15,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('digiflazz:run')
-            ->everyFifteenMinutes();
+            ->everyFiveMinutes();
 
         $schedule->command('app:ovopay-run')
             ->everyThreeMinutes();

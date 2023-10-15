@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Api\AuthController as AuthGatewayController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MembersController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,11 +22,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/get-transaction', function () {
-    Illuminate\Support\Facades\Artisan::call("app:gopay-run");
-});
+// Route::get('/get-transaction', function () {
+//     Illuminate\Support\Facades\Artisan::call("app:gopay-run");
+// });
 
 Route::get('/get-layanan', function () {
+    Log::info("JOB DI RUN");
     Illuminate\Support\Facades\Artisan::call("digiflazz:run");
 });
 

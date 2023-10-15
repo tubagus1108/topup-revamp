@@ -35,41 +35,43 @@ class GopayCommand extends Command
         $nomor = config('services.gopay.nomor');
 
         $getTranction = Gopay::where('phone', $nomor)->latest()->first();
-        $app = new GojekPay($getTranction->token);
-        $getData = json_decode($app->getTransactionHistory(), true);
-        $list_transaksi = $getData['data']['success'];
+        if ($getTranction) {
+            $app = new GojekPay($getTranction->token);
+            $getData = json_decode($app->getTransactionHistory(), true);
+            $list_transaksi = $getData['data']['success'];
 
-        $transaksi = [];
-        foreach ($list_transaksi as $transfer) {
-            if ($transfer['type'] == "credit") {
-                $transaksi = $transfer;
+            $transaksi = [];
+            foreach ($list_transaksi as $transfer) {
+                if ($transfer['type'] == "credit") {
+                    $transaksi = $transfer;
 
-                // Mengeupdate record yang memenuhi kondisi di tabel Deposits
-                $deposit = Deposits::where('amount', $transaksi['amount']['value'])->where('status', 'Pending')->first();
+                    // Mengeupdate record yang memenuhi kondisi di tabel Deposits
+                    $deposit = Deposits::where('amount', $transaksi['amount']['value'])->where('status', 'Pending')->first();
 
-                // Memeriksa apakah $deposit tidak null
-                if ($deposit) {
-                    // Mencari model User berdasarkan user_id
-                    $user = User::find($deposit['user_id']);
+                    // Memeriksa apakah $deposit tidak null
+                    if ($deposit) {
+                        // Mencari model User berdasarkan user_id
+                        $user = User::find($deposit['user_id']);
 
-                    // Menambahkan nilai ke balance User
-                    $user->balance += $deposit['amount'];
+                        // Menambahkan nilai ke balance User
+                        $user->balance += $deposit['amount'];
 
-                    // Menyimpan perubahan ke model User
-                    $user->save();
+                        // Menyimpan perubahan ke model User
+                        $user->save();
 
-                    // Mengupdate status Deposit menjadi Success
-                    $deposit->status = 'Success';
-                    $deposit->save();
+                        // Mengupdate status Deposit menjadi Success
+                        $deposit->status = 'Success';
+                        $deposit->save();
+                    }
                 }
             }
+
+            Log::info("=== SUKSES ====", [
+                'message' => "Berhasil get Mutasi Cron",
+                'data' => $transaksi
+            ]);
+        } else {
+            Log::info("PAYMENT GOPAY BELUM DI SET");
         }
-
-        Log::info("=== SUKSES ====", [
-            'message' => "Berhasil get Mutasi Cron",
-            'data' => $transaksi
-        ]);
-
-        return $transaksi;
     }
 }
