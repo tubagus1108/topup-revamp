@@ -8,10 +8,12 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+
 class PaymentController extends Controller
 {
-    public function created(Request $request){
-        try{
+    public function created(Request $request)
+    {
+        try {
             $payment = Payment::createdPayment([
                 'name' => $request['name'],
                 'image' => $request['image'],
@@ -23,7 +25,7 @@ class PaymentController extends Controller
                 'message' => 'Successfully created payment method!',
                 'data' => $payment,
             ], HttpResponse::HTTP_CREATED);
-    }catch (\Exception $ex) {
+        } catch (\Exception $ex) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error: ' . $ex->getMessage(),
@@ -35,11 +37,11 @@ class PaymentController extends Controller
     {
         $user = Auth::user()->id;
         $depositPending = Deposits::depositPending($user);
-        if($depositPending){
-            return response()->json(['status' => 'error','message' => 'Deposit anda masik ada yang pending'],HttpResponse::HTTP_BAD_GATEWAY);
+        if ($depositPending) {
+            return response()->json(['status' => 'error', 'message' => 'Deposit anda masik ada yang pending'], HttpResponse::HTTP_BAD_GATEWAY);
         }
-        
-        try{
+
+        try {
             $payment = Deposits::createdDeposit([
                 'user_id' => $user,
                 'method_id' => $request['method_id'],
@@ -52,11 +54,19 @@ class PaymentController extends Controller
                 'message' => 'Successfully created deposit!',
                 'data' => $payment,
             ], HttpResponse::HTTP_CREATED);
-        }catch (\Exception $ex) {
+        } catch (\Exception $ex) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error: ' . $ex->getMessage(),
             ], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function status()
+    {
+        $user = Auth::user()->id;
+        $status_deposit = Deposits::with('method_deposit')->where('user_id', $user)->get();
+
+        return response()->json(['message' => 'Get deposit list success', 'data' => $status_deposit], 200);
     }
 }

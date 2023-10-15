@@ -60,6 +60,8 @@ Route::group(['prefix' => 'gateway'], function () {
         Route::post('deposit', [PaymentController::class, 'createdDeposit']);
         Route::get('/order/{code}', [ServiceController::class, 'layanan']);
 
+        Route::get('/deposit/status', [PaymentController::class, 'status']);
+
         //Role route Admin
         Route::group(['middleware' => ['role']], function () {
             Route::group(['prefix' => 'settings'], function () {

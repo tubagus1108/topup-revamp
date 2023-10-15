@@ -20,6 +20,16 @@ class Deposits extends Model
         'status',
     ];
 
+    public function method_deposit()
+    {
+        return $this->belongsTo(Payment::class, 'method_id');
+    }
+
+    public function getMethodDepositNameAttribute()
+    {
+        return $this->method_deposit->name ?? null;
+    }
+
     public static function createdDeposit(array $request)
     {
         $deposit = new Deposits([
