@@ -44,7 +44,7 @@ class OvopayCommand extends Command
                     foreach ($list_transaksi['orders'][0]['complete'] as $transaction => $key) {
                         $data = json_decode(json_encode($key), true);
                         $incomingTransfer = $data['transaction_type'];
-                        if ($incomingTransfer == "TOPUP CASH" || $incomingTransfer == "TOPUP TRANSFER FEE") { //cek apakah ada status incoming transfer jika ada push ke array
+                        if ($incomingTransfer == "TOPUP CASH" || $incomingTransfer == "TOPUP TRANSFER FEE" || $incomingTransfer == "FINANCIAL") { //cek apakah ada status incoming transfer jika ada push ke array
                             // dd($data);
                             Log::info("=== SUKSES ====", [
                                 'message' => "Berhasil get Mutasi Cron OVO",
