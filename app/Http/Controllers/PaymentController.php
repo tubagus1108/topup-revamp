@@ -7,6 +7,7 @@ use App\Models\Deposits;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class PaymentController extends Controller
@@ -14,15 +15,10 @@ class PaymentController extends Controller
     public function created(Request $request)
     {
         try {
-            $payment = Payment::createdPayment([
-                'name' => $request['name'],
-                'image' => $request['image'],
-                'code' => $request['code'],
-                'type' => $request['type']
-            ]);
+            $payment = Payment::createdPayment($request);
             return response()->json([
                 'status' => 'success',
-                'message' => 'Successfully created payment method!',
+                'message' => 'Successfully created a payment method!',
                 'data' => $payment,
             ], HttpResponse::HTTP_CREATED);
         } catch (\Exception $ex) {
@@ -41,6 +37,10 @@ class PaymentController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Deposit anda masik ada yang pending'], HttpResponse::HTTP_BAD_GATEWAY);
         }
 
+        // if ($request['amount'] < 10000) {
+        //     return response()->json(['status' => 'error', 'message' => 'Minimal deposit 10,000'], HttpResponse::HTTP_BAD_GATEWAY);
+        // }
+
         try {
             $payment = Deposits::createdDeposit([
                 'user_id' => $user,
@@ -49,11 +49,20 @@ class PaymentController extends Controller
                 'amount' => $request['amount'],
                 'status' => "Pending"
             ]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Successfully created deposit!',
-                'data' => $payment,
-            ], HttpResponse::HTTP_CREATED);
+
+            if ($payment) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Successfully created deposit!',
+                    'data' => $payment,
+                ], HttpResponse::HTTP_CREATED);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Failed not found method!',
+                    'data' => $payment,
+                ], HttpResponse::HTTP_NOT_FOUND);
+            }
         } catch (\Exception $ex) {
             return response()->json([
                 'status' => 'error',
@@ -73,6 +82,14 @@ class PaymentController extends Controller
     public function list()
     {
         $list = Payment::all();
-        return response()->json(['message' => 'Get payment method list success', 'data' => $list], 200);
+
+        $listWithUrls = $list->map(function ($payment) {
+            $paymentData = $payment->toArray();
+            $paymentData['image'] = Storage::disk('public')->url($paymentData['image']);
+            $paymentData['image_qris'] = Storage::disk('public')->url($paymentData['image_qris']);
+            return $paymentData;
+        });
+
+        return response()->json(['message' => 'Get payment method list success', 'data' => $listWithUrls], 200);
     }
 }

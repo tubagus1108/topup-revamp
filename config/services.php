@@ -46,4 +46,10 @@ return [
         'nomor' => env('OVO_PHONE'),
         'pin' => env('OVO_PIN')
     ],
+
+    'qris' => [
+        'email' => env('QRIS_EMAIL'),
+        'password' => env('QRIS_PWD'),
+        'fee' => env('QRIS_FEE'),
+    ],
 ];

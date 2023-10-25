@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('image')->nullable();
+            $table->string('image_qris')->nullable();
             $table->string('code')->nullable();
             $table->text('desc')->nullable();
-            $table->enum('type',['e-wallet','bank','virtual-account','convenience-store','qris'])->default('e-wallet');
+            $table->enum('type', ['e-wallet', 'bank', 'virtual-account', 'convenience-store', 'qris'])->default('e-wallet');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -17,7 +17,9 @@ return new class extends Migration
             $table->integer('method_id');
             $table->string('payment_no')->nullable();
             $table->bigInteger('amount');
-            $table->enum('status',['Success','Pending'])->default('Pending');
+            $table->bigInteger('fee');
+            $table->bigInteger('total_amount');
+            $table->enum('status', ['Success', 'Pending'])->default('Pending');
             $table->timestamps();
             $table->softDeletes();
         });

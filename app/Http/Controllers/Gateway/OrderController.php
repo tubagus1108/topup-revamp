@@ -21,9 +21,10 @@ class OrderController extends Controller
         // dd("USER", $user);
         $product = Services::getProductID($request->product, $user);
 
+        dd($product);
         // Check if the user has enough balance
         if ($user->balance < $product['price']) {
-            return response()->json(['status' => 'error', 'message' => 'Insufficient balance']);
+            return response()->json(['status' => 'error', 'message' => 'Insufficient balance'], 405);
         }
 
         // Start the transaction
