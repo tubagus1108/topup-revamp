@@ -36,19 +36,28 @@ class ServiceController extends Controller
         }
     }
 
-    public function layanan($code)
+    public function layananDetail($type, $code)
     {
         $user = Auth::user();
         if (!$user) {
             return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
         }
-        $getCategory = Category::where('code', $code)->where('status', 'active')->first();
-
+        $getCategory = Category::where('code', $code)->where('type', $type)->where('status', 'active')->first();
         if ($getCategory) {
             $product = Services::getServiceByCode($user->role, $getCategory->id);
             return response()->json(['status' => 'success', 'message' => 'Success get product', 'data' => $product]);
         } else {
             return response()->json(['status' => 'error', 'message' => 'Category not found'], 404);
         }
+    }
+
+    public function serviceType($type)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
+        }
+        $getCategory = Category::where('type', $type)->where('status', 'active')->get();
+        return response()->json(['status' => 'success', 'message' => 'Success get sevice', 'data' => $getCategory]);
     }
 }

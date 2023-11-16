@@ -60,7 +60,8 @@ Route::group(['prefix' => 'gateway'], function () {
         });
 
         Route::post('deposit', [PaymentController::class, 'createdDeposit']);
-        Route::get('/order/{code}', [ServiceController::class, 'layanan']);
+        Route::get('/service/{type}', [ServiceController::class, 'serviceType']);
+        Route::get('/order/{type}/{code}', [ServiceController::class, 'layananDetail']);
 
         Route::get('/deposit/status', [PaymentController::class, 'status']);
         Route::get('/deposit', [PaymentController::class, 'list']);
