@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderPrepaid extends Model
@@ -30,7 +31,6 @@ class OrderPrepaid extends Model
     ];
 
     protected $hidden = [
-        'user_id',
         'id',
         'order_id',
         'id_service',
@@ -103,7 +103,6 @@ class OrderPrepaid extends Model
 
         // Melakukan permintaan API menggunakan metode connect() (asumsikan sudah didefinisikan sebelumnya)
         $response = self::connect($baseUrl, $data, $header);
-        Log::info("==== RESPONSE ORDER ====", $response);
         return $response;
     }
 
@@ -161,10 +160,6 @@ class OrderPrepaid extends Model
                     'status' => $status,
                     'sn' => $note,
                     'refund' => 1,
-                ]);
-                // Perform the balance update logic here
-                User::where('id', $order->user_id)->update([
-                    'balance' => $order->user->balance + $price,
                 ]);
                 return true;
 
