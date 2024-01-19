@@ -21,7 +21,7 @@ class OrderController extends Controller
         // dd("USER", $user);
         $product = Services::getProductID($request->product, $user);
 
-        dd($product);
+        //dd($product);
         // Check if the user has enough balance
         if ($user->balance < $product['price']) {
             return response()->json(['status' => 'error', 'message' => 'Insufficient balance'], 405);
@@ -80,6 +80,17 @@ class OrderController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Something went wrong: ' . $e->getMessage()]);
         }
 
-        return response()->json(['status' => 'success', 'message' => 'Success order prepaid', 'data' => $order]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success order prepaid',
+            'data' => [
+                'invoice' => $order['invoice'],
+                'customer_no' => $order['customer_no'],
+                'price' => $order['price'],
+                'status' => $order['status'],
+                'desc' => $order['desc'],
+                'order_via' => $order['order_via'],
+            ]
+        ]);
     }
 }

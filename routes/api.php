@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CallbackController;
 use App\Http\Controllers\Api\RestApiController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Gateway\CheckIgnController;
 use App\Http\Controllers\Gateway\GojekController;
 use App\Http\Controllers\Gateway\OrderController;
 use App\Http\Controllers\Gateway\OvoPayController;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+//CHECK IGN NAME
+Route::post('check-ign', [CheckIgnController::class, 'index'])->name('index');
 
 //Documention User Order by Rest Api
 Route::group(['middleware' => ['verifiedToken', 'verifiedIP', 'verifiedRole']], function () {

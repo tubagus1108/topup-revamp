@@ -97,7 +97,18 @@ class RestApiController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Something went wrong: ' . $e->getMessage()]);
         }
 
-        return response()->json(['status' => 'success', 'message' => 'Success order prepaid', 'data' => $order]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success order prepaid',
+            'data' => [
+                'invoice' => $order['invoice'],
+                'customer_no' => $order['customer_no'],
+                'price' => $order['price'],
+                'status' => $order['status'],
+                'desc' => $order['desc'],
+                'order_via' => $order['order_via'],
+            ]
+        ]);
     }
 
     public function status(OrderStatusRequest $request)
