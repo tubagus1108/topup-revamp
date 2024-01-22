@@ -31,4 +31,25 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'digiflazz' => [
+        'username' => env('DIGIFLAZZ_USERNAME'),
+        'secret_key' => env('DIGIFLAZZ_SECRET_KEY'),
+        'base_url' => env('DIGIFLAZZ_BASE_URL'),
+    ],
+
+    'gopay' => [
+        'nomor' => env('GOJEK_PHONE'),
+        'pin' => env('GOJEK_PIN')
+    ],
+
+    'ovopay' => [
+        'nomor' => env('OVO_PHONE'),
+        'pin' => env('OVO_PIN')
+    ],
+
+    'qris' => [
+        'email' => env('QRIS_EMAIL'),
+        'password' => env('QRIS_PWD'),
+        'fee' => env('QRIS_FEE'),
+    ],
 ];

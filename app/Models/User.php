@@ -4,15 +4,18 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
 
+    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
@@ -22,7 +25,13 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'whatsapp',
+        'username',
+        'balance',
+        'role',
+        'token',
         'password',
+        'pin',
     ];
 
     /**
@@ -31,9 +40,23 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $hidden = [
+        'id',
+        'email_verified_at',
         'password',
         'remember_token',
+        'token',
+        'otp',
+        'whitelist_ip',
+        'deleted_at',
+        'pin',
     ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that should be cast.
@@ -42,7 +65,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
     // Rest omitted for brevity
@@ -65,6 +87,71 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public static function getUsersDatatable($start, $length, $column, $order)
+    {
+        return User::offset($start)
+                     ->limit($length)
+                     ->orderBy($column, $order)
+                     ->get();
+    }
+
+    public static function createNewUser(array $request)
+    {
+        $user = new User([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+            'whatsapp' => $request['whatsapp'],
+            'username' => $request['username'],
+            'balance' => $request['balance'],
+            'role' => $request['role'],
+            'token' => static::generateCustomToken(),
+            'pin' => Hash::make($request['pin']),
+        ]);
+        
+        $user->save();
+
+        return $user;
+    }
+
+    public static function getDetails($id)
+    {
+        return User::findOrFail($id);
+    }
+
+    public static function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return true;
+    }
+
+    public static function editUser($request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->fill($request->all());
+        $user->save();
+
+        return $user;
+    }
+
+    public function checkBalance($price){
+        return $this->balance > $price;
+    }
+
+    public static function generateCustomToken()
+    {
+        $token = base64_encode(random_bytes(40)); // Menghasilkan token acak sepanjang 40 byte dan di-encode dengan base64
+
+        return $token;
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'Admin'; // Ubah 'admin' sesuai dengan nilai yang mewakili peran Admin dalam basis data
     }
 
 }
