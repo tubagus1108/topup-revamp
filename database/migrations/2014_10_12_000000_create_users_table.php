@@ -20,9 +20,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->bigInteger('balance')->default(0);
-            $table->enum('role', ['Admin', 'Member', 'Gold','Platinum'])->default('Admin');
+            $table->enum('role', ['Admin', 'Member', 'Gold', 'Platinum'])->default('Admin');
             $table->string("otp")->nullable();
-            $table->string('pin');
+            $table->string('pin')->nullable();
             $table->rememberToken();
             $table->string("token")->nullable();
             $table->timestamps();
