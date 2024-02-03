@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 //CHECK IGN NAME
-Route::post('check-ign', [CheckIgnController::class, 'index'])->name('index');
+Route::get('check-ign', [CheckIgnController::class, 'index'])->name('index');
 
 //Documention User Order by Rest Api
 Route::group(['middleware' => ['verifiedToken', 'verifiedIP', 'verifiedRole']], function () {

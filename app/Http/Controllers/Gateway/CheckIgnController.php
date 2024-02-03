@@ -15,9 +15,9 @@ class CheckIgnController extends Controller
     {
         if ($request->filled(['game', 'user_id'])) {
             $input_post = [
-                'game' => trim($request->input('game')),
-                'user_id' => trim($request->input('user_id')),
-                'other_id' => trim($request->input('other_id'))
+                'game' => trim($request->query('game')),
+                'user_id' => trim($request->query('user_id')),
+                'other_id' => trim($request->query('other_id'))
             ];
 
             $ischeck = false;
